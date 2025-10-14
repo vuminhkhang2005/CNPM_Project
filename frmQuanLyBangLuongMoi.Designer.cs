@@ -118,6 +118,7 @@ namespace CNPM_Project
             this.Name = "frmQuanLyBangLuongMoi";
             this.Text = "Quản Lý Bảng Lương Nhân Viên";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Load += new System.EventHandler(this.frmQuanLyBangLuongMoi_Load);
 
             // Tiếp tục layout
             this.gbThongTin.ResumeLayout(false);
