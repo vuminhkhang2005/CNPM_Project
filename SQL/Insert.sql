@@ -12,14 +12,14 @@ GO
 -- ================================
 INSERT INTO Taikhoan (Hovaten, Sodienthoai, Matkhau, Ngaysinh, Chucvu) VALUES
 (N'Nguyễn Văn An', '0912345678', 'password123', '1985-05-20', N'Quản lý'),
-(N'Trần Thị Bích', '0987654321', 'password123', '1990-11-15', N'Dược sĩ'),
-(N'Lê Minh Cường', '0905112233', 'password123', '1992-02-10', N'Dược sĩ'),
+(N'Trần Thị Bích', '0987654321', 'password123', '1990-11-15', N'Nhân viên chăm sóc khách hàng'),
+(N'Lê Minh Cường', '0905112233', 'password123', '1992-02-10', N'Nhân viên kho'),
 (N'Phạm Thị Dung', '0934567890', 'password123', '1995-07-30', N'Nhân viên bán hàng'),
 (N'Hoàng Văn Em', '0978123456', 'password123', '1998-09-05', N'Nhân viên bán hàng'),
 (N'Vũ Thị Hà', '0915654789', 'password123', '1991-03-25', N'Kế toán'),
 (N'Đặng Minh Long', '0945789123', 'password123', '1993-08-12', N'Nhân viên kho'),
 (N'Bùi Thị Kiều', '0965432198', 'password123', '1996-01-18', N'Nhân viên bán hàng'),
-(N'Ngô Tuấn Anh', '0923456789', 'password123', '1994-06-22', N'Dược sĩ'),
+(N'Ngô Tuấn Anh', '0923456789', 'password123', '1994-06-22', N'Nhân viên chăm sóc khách hàng'),
 (N'Đỗ Phương Thảo', '0956789123', 'password123', '1988-12-01', N'Kế toán');
 GO
 
