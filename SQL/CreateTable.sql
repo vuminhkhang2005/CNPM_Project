@@ -1,4 +1,4 @@
-﻿-- ================================
+-- ================================
 -- Xóa database cũ nếu tồn tại
 -- ================================
 IF DB_ID('NhaThuocDB') IS NOT NULL
@@ -169,12 +169,15 @@ CREATE TABLE ChiTietPhieuNhap (
 -- ================================
 CREATE TABLE ThongSoLuong (
     ID INT PRIMARY KEY IDENTITY(1,1),
-    HeSoLuongCoBan DECIMAL(10, 2) NOT NULL,
-    PhuCapChucVu DECIMAL(18, 2) DEFAULT 0,
+    ChucVu NVARCHAR(50) NOT NULL, -- Chức vụ áp dụng
+    HeSoLuongCoBan DECIMAL(10, 2) NOT NULL, -- Hệ số lương cơ bản
+    PhuCapChucVu DECIMAL(18, 2) DEFAULT 0, -- Phụ cấp chức vụ
     TyLeBHXH DECIMAL(5, 2) NOT NULL, -- Tỷ lệ Bảo hiểm xã hội
     TyLeBHYT DECIMAL(5, 2) NOT NULL, -- Tỷ lệ Bảo hiểm y tế
     TyLeBHTN DECIMAL(5, 2) NOT NULL, -- Tỷ lệ Bảo hiểm thất nghiệp
-    NgayApDung DATE NOT NULL
+    Thang INT NOT NULL, -- Tháng áp dụng (1-12)
+    Nam INT NOT NULL, -- Năm áp dụng
+    CONSTRAINT UQ_ThongSoLuong UNIQUE (ChucVu, Thang, Nam) -- Mỗi chức vụ chỉ có 1 thông số/tháng/năm
 );
 
 -- ================================
