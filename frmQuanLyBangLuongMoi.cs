@@ -439,14 +439,34 @@ namespace CNPM_Project
                 {
                     conn.Open();
 
-                    // Lấy thông số lương mới nhất
-                    string query = "SELECT TOP 1 * FROM ThongSoLuong ORDER BY NgayApDung DESC";
+                    // Lấy chức vụ của nhân viên
+                    string getChucVuQuery = "SELECT Chucvu FROM Taikhoan WHERE Manguoidung = @MaNV";
+                    SqlCommand cmdChucVu = new SqlCommand(getChucVuQuery, conn);
+                    cmdChucVu.Parameters.AddWithValue("@MaNV", maNhanVien);
+                    string chucVu = cmdChucVu.ExecuteScalar()?.ToString();
+
+                    if (string.IsNullOrEmpty(chucVu))
+                    {
+                        MessageBox.Show("Không tìm thấy chức vụ của nhân viên!", 
+                            "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return 0;
+                    }
+
+                    // Lấy thông số lương theo chức vụ, tháng và năm
+                    int thang = Convert.ToInt32(numThang.Value);
+                    int nam = Convert.ToInt32(numNam.Value);
+                    
+                    string query = @"SELECT TOP 1 * FROM ThongSoLuong 
+                                   WHERE ChucVu = @ChucVu AND Thang = @Thang AND Nam = @Nam";
                     SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@ChucVu", chucVu);
+                    cmd.Parameters.AddWithValue("@Thang", thang);
+                    cmd.Parameters.AddWithValue("@Nam", nam);
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     if (!reader.Read())
                     {
-                        MessageBox.Show("Chưa có thông số lương trong hệ thống! Vui lòng thiết lập trước.", 
+                        MessageBox.Show($"Chưa có thông số lương cho chức vụ '{chucVu}' trong tháng {thang}/{nam}!\nVui lòng thiết lập trước.", 
                             "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         reader.Close();
                         return 0;
