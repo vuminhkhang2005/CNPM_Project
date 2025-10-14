@@ -43,7 +43,7 @@ namespace CNPM_Project
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    string query = "SELECT Manguoidung, Hovaten FROM Taikhoan WHERE Chucvu = N'Nhân viên'";
+                    string query = "SELECT Manguoidung, Hovaten FROM Taikhoan ORDER BY Hovaten";
                     SqlDataAdapter da = new SqlDataAdapter(query, conn);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
