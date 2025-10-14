@@ -1,6 +1,6 @@
 using System;
-using System.Data; // Thêm thư viện này để dùng DataTable
-using System.Data.SqlClient; // Thêm thư viện này để kết nối SQL Server
+using System.Data;
+using System.Data.SqlClient;
 using System.Windows.Forms;
 
 namespace CNPM_Project
@@ -8,25 +8,31 @@ namespace CNPM_Project
     public partial class frmQuanLyBangLuongMoi : Form
     {
         string connectionString = @"Data Source=DESKTOP-MJLB0BP\SQLEXPRESS;Initial Catalog=NhaThuocDB;Integrated Security=True;TrustServerCertificate=True";
+        private int selectedMaBangLuong = -1; // Lưu mã bảng lương đang chọn
 
         public frmQuanLyBangLuongMoi()
         {
             InitializeComponent();
         }
 
-        // Sửa lại sự kiện Form_Load để gọi LoadData()
         private void frmQuanLyBangLuongMoi_Load(object sender, EventArgs e)
         {
             LoadData();
+            SetupDataGridView();
         }
 
-        // ✅ VIẾT LẠI HOÀN TOÀN PHƯƠNG THỨC NÀY
+        private void SetupDataGridView()
+        {
+            // Thiết lập chế độ chọn cả dòng
+            dgvBangLuong.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvBangLuong.MultiSelect = false;
+            dgvBangLuong.ReadOnly = true;
+            dgvBangLuong.AllowUserToAddRows = false;
+        }
+
         private void LoadData()
         {
-            // Tải danh sách nhân viên vào ComboBox
             LoadNhanVienToComboBox();
-
-            // Tải dữ liệu bảng lương vào DataGridView
             LoadBangLuongToGrid();
         }
 
@@ -42,121 +48,158 @@ namespace CNPM_Project
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
-                    // Thiết lập DataSource cho ComboBox
+                    // Thêm dòng "Chọn nhân viên" ở đầu
+                    DataRow row = dt.NewRow();
+                    row["Manguoidung"] = -1;
+                    row["Hovaten"] = "-- Chọn nhân viên --";
+                    dt.Rows.InsertAt(row, 0);
+
                     cboNhanVien.DataSource = dt;
-                    cboNhanVien.DisplayMember = "Hovaten"; // Hiển thị cột Họ và tên
-                    cboNhanVien.ValueMember = "Manguoidung"; // Giá trị ẩn là Mã người dùng
+                    cboNhanVien.DisplayMember = "Hovaten";
+                    cboNhanVien.ValueMember = "Manguoidung";
+                    cboNhanVien.SelectedIndex = 0;
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi tải danh sách nhân viên: " + ex.Message, "Lỗi Cơ sở dữ liệu");
+                MessageBox.Show("Lỗi khi tải danh sách nhân viên: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void LoadBangLuongToGrid()
+        private void LoadBangLuongToGrid(int? thang = null, int? nam = null, int? maNhanVien = null)
         {
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    // Câu lệnh JOIN để lấy được tên nhân viên từ bảng Taikhoan
+                    
                     string query = @"
                         SELECT 
+                            BL.MaBangLuong,
                             BL.MaNhanVien, 
                             TK.Hovaten, 
-                            CAST(BL.Thang AS VARCHAR) + '/' + CAST(BL.Nam AS VARCHAR) AS KyLuong,
+                            BL.Thang,
+                            BL.Nam,
                             BL.SoNgayCongThucTe,
                             BL.LuongCoBan, 
-                            BL.ThucLinh
+                            BL.PhuCap,
+                            BL.KhauTruBaoHiem,
+                            BL.ThucLinh,
+                            BL.NgayTinhLuong
                         FROM BangLuong AS BL
-                        JOIN Taikhoan AS TK ON BL.MaNhanVien = TK.Manguoidung";
+                        JOIN Taikhoan AS TK ON BL.MaNhanVien = TK.Manguoidung
+                        WHERE 1=1";
 
-                    SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                    // Thêm điều kiện lọc nếu có
+                    if (thang.HasValue && thang.Value > 0)
+                        query += " AND BL.Thang = @Thang";
+                    
+                    if (nam.HasValue && nam.Value > 0)
+                        query += " AND BL.Nam = @Nam";
+                    
+                    if (maNhanVien.HasValue && maNhanVien.Value > 0)
+                        query += " AND BL.MaNhanVien = @MaNV";
+
+                    query += " ORDER BY BL.Nam DESC, BL.Thang DESC, TK.Hovaten";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    
+                    if (thang.HasValue && thang.Value > 0)
+                        cmd.Parameters.AddWithValue("@Thang", thang.Value);
+                    
+                    if (nam.HasValue && nam.Value > 0)
+                        cmd.Parameters.AddWithValue("@Nam", nam.Value);
+                    
+                    if (maNhanVien.HasValue && maNhanVien.Value > 0)
+                        cmd.Parameters.AddWithValue("@MaNV", maNhanVien.Value);
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
-                    // Gán thẳng DataTable làm nguồn dữ liệu cho DataGridView
                     dgvBangLuong.DataSource = dt;
 
-                    // Tùy chỉnh tên cột cho đẹp hơn (tùy chọn)
                     if (dgvBangLuong.Columns.Count > 0)
                     {
+                        // Ẩn cột ID
+                        dgvBangLuong.Columns["MaBangLuong"].Visible = false;
+                        
+                        // Đặt tên cột
                         dgvBangLuong.Columns["MaNhanVien"].HeaderText = "Mã NV";
                         dgvBangLuong.Columns["Hovaten"].HeaderText = "Họ và Tên";
-                        dgvBangLuong.Columns["KyLuong"].HeaderText = "Kỳ Lương";
+                        dgvBangLuong.Columns["Thang"].HeaderText = "Tháng";
+                        dgvBangLuong.Columns["Nam"].HeaderText = "Năm";
                         dgvBangLuong.Columns["SoNgayCongThucTe"].HeaderText = "Ngày công";
                         dgvBangLuong.Columns["LuongCoBan"].HeaderText = "Lương Cơ Bản";
+                        dgvBangLuong.Columns["PhuCap"].HeaderText = "Phụ Cấp";
+                        dgvBangLuong.Columns["KhauTruBaoHiem"].HeaderText = "Khấu trừ BH";
                         dgvBangLuong.Columns["ThucLinh"].HeaderText = "Thực Lĩnh";
+                        dgvBangLuong.Columns["NgayTinhLuong"].HeaderText = "Ngày tính";
 
-                        // Định dạng cột tiền tệ
+                        // Định dạng tiền tệ
                         dgvBangLuong.Columns["LuongCoBan"].DefaultCellStyle.Format = "N0";
+                        dgvBangLuong.Columns["PhuCap"].DefaultCellStyle.Format = "N0";
+                        dgvBangLuong.Columns["KhauTruBaoHiem"].DefaultCellStyle.Format = "N0";
                         dgvBangLuong.Columns["ThucLinh"].DefaultCellStyle.Format = "N0";
+
+                        // Định dạng ngày
+                        dgvBangLuong.Columns["NgayTinhLuong"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+
+                        // Thiết lập độ rộng cột
+                        dgvBangLuong.Columns["MaNhanVien"].Width = 60;
+                        dgvBangLuong.Columns["Hovaten"].Width = 150;
+                        dgvBangLuong.Columns["Thang"].Width = 60;
+                        dgvBangLuong.Columns["Nam"].Width = 60;
+                        dgvBangLuong.Columns["SoNgayCongThucTe"].Width = 80;
                     }
+
+                    lblTongSoBanGhi.Text = $"Tổng số: {dt.Rows.Count} bản ghi";
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi tải dữ liệu bảng lương: " + ex.Message, "Lỗi Cơ sở dữ liệu");
+                MessageBox.Show("Lỗi khi tải dữ liệu bảng lương: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        // --- Các hàm xử lý sự kiện cho nút bấm ---
         private void btnTinhLuong_Click(object sender, EventArgs e)
         {
-            // Kiểm tra dữ liệu đầu vào
-            if (cboNhanVien.SelectedValue == null)
-            {
-                MessageBox.Show("Vui lòng chọn nhân viên!", "Cảnh báo");
+            if (!ValidateInput())
                 return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtSoNgayCong.Text))
-            {
-                MessageBox.Show("Vui lòng nhập số ngày công!", "Cảnh báo");
-                return;
-            }
 
             try
             {
                 int maNhanVien = Convert.ToInt32(cboNhanVien.SelectedValue);
-                int thang = Convert.ToInt32(numThang.Value);
-                int nam = Convert.ToInt32(numNam.Value);
                 int soNgayCong = Convert.ToInt32(txtSoNgayCong.Text);
 
-                // Tính lương
-                decimal luongThucLinh = TinhLuong(maNhanVien, soNgayCong, thang, nam);
+                decimal luongThucLinh = TinhLuong(maNhanVien, soNgayCong, out decimal luongCoBan, out decimal phuCap, out decimal khauTru);
 
                 if (luongThucLinh > 0)
                 {
-                    MessageBox.Show($"Lương thực lĩnh của nhân viên: {luongThucLinh:N0} VNĐ", "Kết quả tính lương");
+                    string message = $"KẾT QUẢ TÍNH LƯƠNG\n\n" +
+                                   $"Nhân viên: {cboNhanVien.Text}\n" +
+                                   $"Số ngày công: {soNgayCong}\n" +
+                                   $"━━━━━━━━━━━━━━━━━━━━━━\n" +
+                                   $"Lương cơ bản: {luongCoBan:N0} VNĐ\n" +
+                                   $"Phụ cấp: {phuCap:N0} VNĐ\n" +
+                                   $"Khấu trừ BH: {khauTru:N0} VNĐ\n" +
+                                   $"━━━━━━━━━━━━━━━━━━━━━━\n" +
+                                   $"THỰC LĨNH: {luongThucLinh:N0} VNĐ";
+                    
+                    MessageBox.Show(message, "Kết quả tính lương", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-            }
-            catch (FormatException)
-            {
-                MessageBox.Show("Số ngày công phải là số nguyên!", "Lỗi");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi tính lương: " + ex.Message, "Lỗi");
+                MessageBox.Show("Lỗi khi tính lương: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void btnLuu_Click(object sender, EventArgs e)
+        private void btnThem_Click(object sender, EventArgs e)
         {
-            // Kiểm tra dữ liệu đầu vào
-            if (cboNhanVien.SelectedValue == null)
-            {
-                MessageBox.Show("Vui lòng chọn nhân viên!", "Cảnh báo");
+            if (!ValidateInput())
                 return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtSoNgayCong.Text))
-            {
-                MessageBox.Show("Vui lòng nhập số ngày công!", "Cảnh báo");
-                return;
-            }
 
             try
             {                
@@ -169,7 +212,7 @@ namespace CNPM_Project
                 {
                     conn.Open();
 
-                    // Kiểm tra xem đã có bảng lương cho nhân viên này trong tháng/năm này chưa
+                    // Kiểm tra trùng
                     string checkQuery = "SELECT COUNT(*) FROM BangLuong WHERE MaNhanVien = @MaNV AND Thang = @Thang AND Nam = @Nam";
                     SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
                     checkCmd.Parameters.AddWithValue("@MaNV", maNhanVien);
@@ -179,37 +222,16 @@ namespace CNPM_Project
 
                     if (count > 0)
                     {
-                        MessageBox.Show("Bảng lương cho nhân viên này trong tháng/năm này đã tồn tại!", "Cảnh báo");
+                        MessageBox.Show("Bảng lương cho nhân viên này trong tháng/năm này đã tồn tại!", 
+                            "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
-                    // Lấy thông số lương mới nhất
-                    string queryThongSo = "SELECT TOP 1 * FROM ThongSoLuong ORDER BY NgayApDung DESC";
-                    SqlCommand cmdThongSo = new SqlCommand(queryThongSo, conn);
-                    SqlDataReader reader = cmdThongSo.ExecuteReader();
+                    // Tính lương
+                    decimal luongThucLinh = TinhLuong(maNhanVien, soNgayCong, out decimal luongCoBan, out decimal phuCap, out decimal khauTru);
 
-                    if (!reader.Read())
-                    {
-                        MessageBox.Show("Chưa có thông số lương trong hệ thống! Vui lòng thiết lập trước.", "Lỗi");
-                        reader.Close();
+                    if (luongThucLinh <= 0)
                         return;
-                    }
-
-                    decimal heSoLuong = Convert.ToDecimal(reader["HeSoLuongCoBan"]);
-                    decimal phuCap = Convert.ToDecimal(reader["PhuCapChucVu"]);
-                    decimal tyLeBHXH = Convert.ToDecimal(reader["TyLeBHXH"]);
-                    decimal tyLeBHYT = Convert.ToDecimal(reader["TyLeBHYT"]);
-                    decimal tyLeBHTN = Convert.ToDecimal(reader["TyLeBHTN"]);
-                    reader.Close();
-
-                    // Tính lương cơ bản theo số ngày công (giả sử 1 tháng = 26 ngày công)
-                    decimal luongCoBan = heSoLuong * soNgayCong / 26;
-                    
-                    // Tính tổng bảo hiểm
-                    decimal tongBaoHiem = luongCoBan * (tyLeBHXH + tyLeBHYT + tyLeBHTN) / 100;
-
-                    // Tính thực lĩnh
-                    decimal thucLinh = luongCoBan + phuCap - tongBaoHiem;
 
                     // Lưu vào database
                     string insertQuery = @"INSERT INTO BangLuong 
@@ -223,38 +245,194 @@ namespace CNPM_Project
                     insertCmd.Parameters.AddWithValue("@SoNgayCong", soNgayCong);
                     insertCmd.Parameters.AddWithValue("@LuongCoBan", luongCoBan);
                     insertCmd.Parameters.AddWithValue("@PhuCap", phuCap);
-                    insertCmd.Parameters.AddWithValue("@KhauTru", tongBaoHiem);
-                    insertCmd.Parameters.AddWithValue("@ThucLinh", thucLinh);
+                    insertCmd.Parameters.AddWithValue("@KhauTru", khauTru);
+                    insertCmd.Parameters.AddWithValue("@ThucLinh", luongThucLinh);
 
                     insertCmd.ExecuteNonQuery();
-                    MessageBox.Show("Cập nhật bảng lương thành công!", "Thành công");
+                    MessageBox.Show("Thêm bảng lương thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     
-                    // Reload dữ liệu
                     LoadBangLuongToGrid();
-                    
-                    // Clear input
-                    txtSoNgayCong.Clear();
+                    ClearInput();
                 }
-            }
-            catch (FormatException)
-            {
-                MessageBox.Show("Vui lòng nhập đúng định dạng số!", "Lỗi");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi lưu bảng lương: " + ex.Message, "Lỗi");
+                MessageBox.Show("Lỗi khi thêm bảng lương: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void btnSuaThongSo_Click(object sender, EventArgs e)
+        private void btnSua_Click(object sender, EventArgs e)
+        {
+            if (selectedMaBangLuong < 0)
+            {
+                MessageBox.Show("Vui lòng chọn một bản ghi từ bảng để sửa!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!ValidateInput())
+                return;
+
+            try
+            {
+                int maNhanVien = Convert.ToInt32(cboNhanVien.SelectedValue);
+                int thang = Convert.ToInt32(numThang.Value);
+                int nam = Convert.ToInt32(numNam.Value);
+                int soNgayCong = Convert.ToInt32(txtSoNgayCong.Text);
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // Kiểm tra trùng (trừ bản ghi đang sửa)
+                    string checkQuery = @"SELECT COUNT(*) FROM BangLuong 
+                                        WHERE MaNhanVien = @MaNV AND Thang = @Thang AND Nam = @Nam 
+                                        AND MaBangLuong != @MaBangLuong";
+                    SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
+                    checkCmd.Parameters.AddWithValue("@MaNV", maNhanVien);
+                    checkCmd.Parameters.AddWithValue("@Thang", thang);
+                    checkCmd.Parameters.AddWithValue("@Nam", nam);
+                    checkCmd.Parameters.AddWithValue("@MaBangLuong", selectedMaBangLuong);
+                    int count = (int)checkCmd.ExecuteScalar();
+
+                    if (count > 0)
+                    {
+                        MessageBox.Show("Bảng lương cho nhân viên này trong tháng/năm này đã tồn tại!", 
+                            "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // Tính lại lương
+                    decimal luongThucLinh = TinhLuong(maNhanVien, soNgayCong, out decimal luongCoBan, out decimal phuCap, out decimal khauTru);
+
+                    if (luongThucLinh <= 0)
+                        return;
+
+                    // Cập nhật
+                    string updateQuery = @"UPDATE BangLuong 
+                                         SET MaNhanVien = @MaNV, 
+                                             Thang = @Thang, 
+                                             Nam = @Nam, 
+                                             SoNgayCongThucTe = @SoNgayCong, 
+                                             LuongCoBan = @LuongCoBan, 
+                                             PhuCap = @PhuCap, 
+                                             KhauTruBaoHiem = @KhauTru, 
+                                             ThucLinh = @ThucLinh,
+                                             NgayTinhLuong = GETDATE()
+                                         WHERE MaBangLuong = @MaBangLuong";
+                    
+                    SqlCommand updateCmd = new SqlCommand(updateQuery, conn);
+                    updateCmd.Parameters.AddWithValue("@MaNV", maNhanVien);
+                    updateCmd.Parameters.AddWithValue("@Thang", thang);
+                    updateCmd.Parameters.AddWithValue("@Nam", nam);
+                    updateCmd.Parameters.AddWithValue("@SoNgayCong", soNgayCong);
+                    updateCmd.Parameters.AddWithValue("@LuongCoBan", luongCoBan);
+                    updateCmd.Parameters.AddWithValue("@PhuCap", phuCap);
+                    updateCmd.Parameters.AddWithValue("@KhauTru", khauTru);
+                    updateCmd.Parameters.AddWithValue("@ThucLinh", luongThucLinh);
+                    updateCmd.Parameters.AddWithValue("@MaBangLuong", selectedMaBangLuong);
+
+                    updateCmd.ExecuteNonQuery();
+                    MessageBox.Show("Cập nhật bảng lương thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    
+                    LoadBangLuongToGrid();
+                    ClearInput();
+                    selectedMaBangLuong = -1;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi cập nhật bảng lương: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnXoa_Click(object sender, EventArgs e)
+        {
+            if (selectedMaBangLuong < 0)
+            {
+                MessageBox.Show("Vui lòng chọn một bản ghi từ bảng để xóa!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn xóa bản ghi này?", 
+                "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        conn.Open();
+                        string query = "DELETE FROM BangLuong WHERE MaBangLuong = @MaBangLuong";
+                        SqlCommand cmd = new SqlCommand(query, conn);
+                        cmd.Parameters.AddWithValue("@MaBangLuong", selectedMaBangLuong);
+                        cmd.ExecuteNonQuery();
+
+                        MessageBox.Show("Xóa bản ghi thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadBangLuongToGrid();
+                        ClearInput();
+                        selectedMaBangLuong = -1;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi xóa bản ghi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void btnTimKiem_Click(object sender, EventArgs e)
+        {
+            int? thang = chkThang.Checked && numThang.Value > 0 ? (int?)numThang.Value : null;
+            int? nam = chkNam.Checked && numNam.Value > 0 ? (int?)numNam.Value : null;
+            int? maNV = cboNhanVien.SelectedValue != null && Convert.ToInt32(cboNhanVien.SelectedValue) > 0 
+                        ? (int?)Convert.ToInt32(cboNhanVien.SelectedValue) 
+                        : null;
+
+            LoadBangLuongToGrid(thang, nam, maNV);
+        }
+
+        private void btnLamMoi_Click(object sender, EventArgs e)
+        {
+            LoadBangLuongToGrid();
+            ClearInput();
+        }
+
+        private void btnThongSoLuong_Click(object sender, EventArgs e)
         {
             frmThongSoLuong frm = new frmThongSoLuong();
             frm.ShowDialog();
         }
 
-        // Hàm tính lương
-        private decimal TinhLuong(int maNhanVien, int soNgayCong, int thang, int nam)
+        private void dgvBangLuong_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex >= 0 && dgvBangLuong.Rows[e.RowIndex].Cells["MaBangLuong"].Value != null)
+            {
+                try
+                {
+                    DataGridViewRow row = dgvBangLuong.Rows[e.RowIndex];
+                    
+                    selectedMaBangLuong = Convert.ToInt32(row.Cells["MaBangLuong"].Value);
+                    
+                    // Điền dữ liệu vào form
+                    cboNhanVien.SelectedValue = Convert.ToInt32(row.Cells["MaNhanVien"].Value);
+                    numThang.Value = Convert.ToInt32(row.Cells["Thang"].Value);
+                    numNam.Value = Convert.ToInt32(row.Cells["Nam"].Value);
+                    txtSoNgayCong.Text = row.Cells["SoNgayCongThucTe"].Value.ToString();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi chọn bản ghi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private decimal TinhLuong(int maNhanVien, int soNgayCong, out decimal luongCoBan, out decimal phuCap, out decimal khauTru)
+        {
+            luongCoBan = 0;
+            phuCap = 0;
+            khauTru = 0;
+
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -268,35 +446,74 @@ namespace CNPM_Project
 
                     if (!reader.Read())
                     {
-                        MessageBox.Show("Chưa có thông số lương trong hệ thống!", "Lỗi");
+                        MessageBox.Show("Chưa có thông số lương trong hệ thống! Vui lòng thiết lập trước.", 
+                            "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         reader.Close();
                         return 0;
                     }
 
                     decimal heSoLuong = Convert.ToDecimal(reader["HeSoLuongCoBan"]);
-                    decimal phuCap = Convert.ToDecimal(reader["PhuCapChucVu"]);
+                    phuCap = Convert.ToDecimal(reader["PhuCapChucVu"]);
                     decimal tyLeBHXH = Convert.ToDecimal(reader["TyLeBHXH"]);
                     decimal tyLeBHYT = Convert.ToDecimal(reader["TyLeBHYT"]);
                     decimal tyLeBHTN = Convert.ToDecimal(reader["TyLeBHTN"]);
                     reader.Close();
 
                     // Tính lương cơ bản (giả sử 1 tháng = 26 ngày công)
-                    decimal luongCoBan = heSoLuong * soNgayCong / 26;
+                    luongCoBan = heSoLuong * soNgayCong / 26;
                     
                     // Tính tổng bảo hiểm
-                    decimal tongBaoHiem = luongCoBan * (tyLeBHXH + tyLeBHYT + tyLeBHTN) / 100;
+                    khauTru = luongCoBan * (tyLeBHXH + tyLeBHYT + tyLeBHTN) / 100;
 
                     // Tính thực lĩnh
-                    decimal thucLinh = luongCoBan + phuCap - tongBaoHiem;
+                    decimal thucLinh = luongCoBan + phuCap - khauTru;
 
                     return thucLinh;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi tính lương: " + ex.Message, "Lỗi");
+                MessageBox.Show("Lỗi khi tính lương: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 0;
             }
+        }
+
+        private bool ValidateInput()
+        {
+            if (cboNhanVien.SelectedValue == null || Convert.ToInt32(cboNhanVien.SelectedValue) <= 0)
+            {
+                MessageBox.Show("Vui lòng chọn nhân viên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cboNhanVien.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtSoNgayCong.Text))
+            {
+                MessageBox.Show("Vui lòng nhập số ngày công!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtSoNgayCong.Focus();
+                return false;
+            }
+
+            int soNgayCong;
+            if (!int.TryParse(txtSoNgayCong.Text, out soNgayCong) || soNgayCong < 0 || soNgayCong > 31)
+            {
+                MessageBox.Show("Số ngày công phải là số nguyên từ 0 đến 31!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtSoNgayCong.Focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        private void ClearInput()
+        {
+            cboNhanVien.SelectedIndex = 0;
+            txtSoNgayCong.Clear();
+            numThang.Value = DateTime.Now.Month;
+            numNam.Value = DateTime.Now.Year;
+            selectedMaBangLuong = -1;
+            chkThang.Checked = false;
+            chkNam.Checked = false;
         }
     }
 }

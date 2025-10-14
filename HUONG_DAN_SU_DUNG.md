@@ -20,13 +20,27 @@ Hệ thống quản lý kế toán cho nhà thuốc với đầy đủ các ch�
   - Ngày áp dụng
 - **Lưu ý:** Hệ thống sẽ lưu lịch sử thông số lương, áp dụng thông số mới nhất khi tính lương
 
-### 2. **Use Case: Cập nhật bảng lương**
+### 2. **Use Case: Cập nhật bảng lương** ⭐ ĐÃ ĐƯỢC THIẾT KẾ LẠI HOÀN TOÀN
 - **Form:** `frmQuanLyBangLuongMoi.cs`
-- **Chức năng:**
-  - Chọn nhân viên cần tính lương
-  - Chọn tháng/năm và nhập số ngày công thực tế
-  - Tính toán và cập nhật bảng lương
-  - Hiển thị danh sách bảng lương đã tạo
+- **Chức năng đầy đủ CRUD:**
+  - ✅ **Tính lương:** Xem trước kết quả tính lương trước khi lưu
+  - ✅ **Thêm:** Thêm bảng lương mới cho nhân viên
+  - ✅ **Sửa:** Chỉnh sửa bảng lương đã tồn tại (chọn từ bảng)
+  - ✅ **Xóa:** Xóa bảng lương (có xác nhận)
+  - ✅ **Tìm kiếm:** Lọc theo nhân viên, tháng, năm
+  - ✅ **Làm mới:** Reset form và reload toàn bộ dữ liệu
+  - ✅ **Thông số lương:** Mở form chỉnh sửa thông số
+  
+- **Tính năng nâng cao:**
+  - Hiển thị đầy đủ thông tin: Mã NV, Họ tên, Tháng, Năm, Ngày công, Lương cơ bản, Phụ cấp, Khấu trừ BH, Thực lĩnh, Ngày tính
+  - Click vào dòng trong bảng để tự động load dữ liệu lên form để sửa
+  - Checkbox để bật/tắt bộ lọc theo tháng/năm
+  - Đếm tổng số bản ghi
+  - Format tiền tệ chuẩn VNĐ
+  - Validation đầy đủ và thông báo lỗi chi tiết
+  - Giao diện hiện đại với màu sắc phân biệt chức năng
+  - Không cho phép trùng lặp (1 nhân viên chỉ có 1 bảng lương/tháng)
+  
 - **Công thức tính:**
   - Lương cơ bản = Hệ số lương × Số ngày công / 26
   - Tổng bảo hiểm = Lương cơ bản × (BHXH% + BHYT% + BHTN%) / 100
@@ -107,15 +121,35 @@ string connectionString = @"Data Source=YOUR_SERVER;Initial Catalog=NhaThuocDB;I
 
 ### Quy trình tính lương nhân viên
 1. **Thiết lập thông số lương** (lần đầu hoặc khi có thay đổi)
-   - Mở "Chỉnh sửa thông số bảng lương"
-   - Nhập các thông số và lưu
-   
-2. **Cập nhật bảng lương hàng tháng**
    - Mở "Cập nhật bảng lương"
-   - Chọn nhân viên, tháng/năm
-   - Nhập số ngày công
-   - Nhấn "Tính Lương" để xem preview
-   - Nhấn "Lưu Bảng Lương" để lưu vào database
+   - Nhấn nút "⚙️ Thông số" 
+   - Nhập các thông số (Hệ số lương, Phụ cấp, Tỷ lệ BH)
+   - Chọn ngày áp dụng và lưu
+   
+2. **Thêm bảng lương mới hàng tháng**
+   - Mở "Cập nhật bảng lương"
+   - Chọn nhân viên từ ComboBox
+   - Chọn tháng/năm
+   - Nhập số ngày công (0-31)
+   - Nhấn "💰 Tính Lương" để xem chi tiết tính toán
+   - Nhấn "➕ Thêm" để lưu vào database
+   
+3. **Sửa bảng lương đã có**
+   - Click vào dòng cần sửa trong bảng
+   - Thông tin tự động load lên form
+   - Chỉnh sửa số ngày công hoặc thông tin khác
+   - Nhấn "✏️ Sửa" để cập nhật
+   
+4. **Xóa bảng lương**
+   - Click vào dòng cần xóa trong bảng
+   - Nhấn "🗑️ Xóa"
+   - Xác nhận xóa
+   
+5. **Tìm kiếm/Lọc bảng lương**
+   - Tick checkbox bên cạnh Tháng/Năm để bật bộ lọc
+   - Chọn nhân viên (tùy chọn)
+   - Nhấn "🔍 Tìm kiếm"
+   - Nhấn "🔄 Làm mới" để xem tất cả
 
 ### Quy trình quản lý công nợ
 1. **Thêm công nợ mới**
