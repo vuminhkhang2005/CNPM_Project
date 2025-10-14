@@ -1,4 +1,4 @@
-﻿// frmQuanLyBangLuongMoi.Designer.cs
+// frmQuanLyBangLuongMoi.Designer.cs
 
 namespace CNPM_Project
 {
@@ -63,10 +63,28 @@ namespace CNPM_Project
             this.cboNhanVien.Location = new System.Drawing.Point(120, 28);
             this.cboNhanVien.Size = new System.Drawing.Size(200, 21);
 
-            // ... (Tương tự cho các control khác)
+            // Tháng
+            this.lblThang.Location = new System.Drawing.Point(350, 30);
+            this.lblThang.Text = "Tháng:";
+            this.numThang.Location = new System.Drawing.Point(400, 28);
+            this.numThang.Size = new System.Drawing.Size(60, 21);
+            this.numThang.Minimum = 1;
+            this.numThang.Maximum = 12;
+            this.numThang.Value = DateTime.Now.Month;
+            
+            // Năm
+            this.lblNam.Location = new System.Drawing.Point(490, 30);
+            this.lblNam.Text = "Năm:";
+            this.numNam.Location = new System.Drawing.Point(530, 28);
+            this.numNam.Size = new System.Drawing.Size(80, 21);
+            this.numNam.Minimum = 2020;
+            this.numNam.Maximum = 2100;
+            this.numNam.Value = DateTime.Now.Year;
+
             this.lblSoNgayCong.Location = new System.Drawing.Point(20, 70);
             this.lblSoNgayCong.Text = "Số ngày công:";
             this.txtSoNgayCong.Location = new System.Drawing.Point(120, 68);
+            this.txtSoNgayCong.Size = new System.Drawing.Size(100, 21);
 
             this.btnTinhLuong.Location = new System.Drawing.Point(350, 65);
             this.btnTinhLuong.Text = "Tính Lương";

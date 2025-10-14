@@ -46,11 +46,47 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmMenuChinh.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMenuChinh.Designer.cs">
+      <DependentUpon>frmMenuChinh.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmQuanLyBangLuongMoi.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmQuanLyBangLuongMoi.Designer.cs">
       <DependentUpon>frmQuanLyBangLuongMoi.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmThongSoLuong.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmThongSoLuong.Designer.cs">
+      <DependentUpon>frmThongSoLuong.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmThemCongNo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmThemCongNo.Designer.cs">
+      <DependentUpon>frmThemCongNo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmXoaCongNo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmXoaCongNo.Designer.cs">
+      <DependentUpon>frmXoaCongNo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmChiPhiNhapHang.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmChiPhiNhapHang.Designer.cs">
+      <DependentUpon>frmChiPhiNhapHang.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmChiPhiBanHang.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmChiPhiBanHang.Designer.cs">
+      <DependentUpon>frmChiPhiBanHang.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

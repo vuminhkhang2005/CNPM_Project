@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 namespace CNPM_Project
@@ -11,7 +11,8 @@ namespace CNPM_Project
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
        
-            Application.Run(new frmQuanLyBangLuongMoi());
+            // Khởi chạy form menu chính
+            Application.Run(new frmMenuChinh());
         }
     }
 }
