@@ -78,7 +78,8 @@ namespace CNPM_Project
                         SELECT 
                             BL.MaBangLuong,
                             BL.MaNhanVien, 
-                            TK.Hovaten, 
+                            TK.Hovaten,
+                            TK.Chucvu,
                             BL.Thang,
                             BL.Nam,
                             BL.SoNgayCongThucTe,
@@ -101,7 +102,7 @@ namespace CNPM_Project
                     if (maNhanVien.HasValue && maNhanVien.Value > 0)
                         query += " AND BL.MaNhanVien = @MaNV";
 
-                    query += " ORDER BY BL.Nam DESC, BL.Thang DESC, TK.Hovaten";
+                    query += " ORDER BY BL.MaNhanVien";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
                     
@@ -128,6 +129,7 @@ namespace CNPM_Project
                         // Đặt tên cột
                         dgvBangLuong.Columns["MaNhanVien"].HeaderText = "Mã NV";
                         dgvBangLuong.Columns["Hovaten"].HeaderText = "Họ và Tên";
+                        dgvBangLuong.Columns["Chucvu"].HeaderText = "Chức vụ";
                         dgvBangLuong.Columns["Thang"].HeaderText = "Tháng";
                         dgvBangLuong.Columns["Nam"].HeaderText = "Năm";
                         dgvBangLuong.Columns["SoNgayCongThucTe"].HeaderText = "Ngày công";
@@ -148,7 +150,8 @@ namespace CNPM_Project
 
                         // Thiết lập độ rộng cột
                         dgvBangLuong.Columns["MaNhanVien"].Width = 60;
-                        dgvBangLuong.Columns["Hovaten"].Width = 150;
+                        dgvBangLuong.Columns["Hovaten"].Width = 130;
+                        dgvBangLuong.Columns["Chucvu"].Width = 140;
                         dgvBangLuong.Columns["Thang"].Width = 60;
                         dgvBangLuong.Columns["Nam"].Width = 60;
                         dgvBangLuong.Columns["SoNgayCongThucTe"].Width = 80;

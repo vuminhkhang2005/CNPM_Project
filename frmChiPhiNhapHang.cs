@@ -2,6 +2,8 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
+using System.IO;
+using ClosedXML.Excel;
 
 namespace CNPM_Project
 {
@@ -92,10 +94,109 @@ namespace CNPM_Project
 
         private void btnXuatBaoCao_Click(object sender, EventArgs e)
         {
-            // Tính năng xuất báo cáo (có thể xuất Excel, PDF...)
-            MessageBox.Show("Chức năng xuất báo cáo đang được phát triển!", "Thông báo");
-            
-            // TODO: Implement export to Excel/PDF
+            try
+            {
+                if (dgvPhieuNhap.Rows.Count == 0)
+                {
+                    MessageBox.Show("Không có dữ liệu để xuất báo cáo!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Tạo thư mục Report nếu chưa tồn tại
+                string reportFolder = @"C:\Users\DELL\source\repos\CNPM_Project\Report";
+                if (!Directory.Exists(reportFolder))
+                {
+                    Directory.CreateDirectory(reportFolder);
+                }
+
+                // Tạo tên file với định dạng ddMMyyyy_ChiPhiNhapHang
+                string fileName = DateTime.Now.ToString("ddMMyyyy") + "_ChiPhiNhapHang.xlsx";
+                string filePath = Path.Combine(reportFolder, fileName);
+
+                // Tạo workbook mới
+                using (var workbook = new XLWorkbook())
+                {
+                    var worksheet = workbook.Worksheets.Add("Chi phí nhập hàng");
+
+                    // Tiêu đề báo cáo
+                    worksheet.Cell(1, 1).Value = "BÁO CÁO CHI PHÍ NHẬP HÀNG";
+                    worksheet.Cell(1, 1).Style.Font.Bold = true;
+                    worksheet.Cell(1, 1).Style.Font.FontSize = 16;
+                    worksheet.Range(1, 1, 1, 6).Merge();
+                    worksheet.Range(1, 1, 1, 6).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                    // Thời gian báo cáo
+                    worksheet.Cell(2, 1).Value = $"Từ ngày: {dtpTuNgay.Value:dd/MM/yyyy} - Đến ngày: {dtpDenNgay.Value:dd/MM/yyyy}";
+                    worksheet.Range(2, 1, 2, 6).Merge();
+                    worksheet.Range(2, 1, 2, 6).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                    // Header
+                    int headerRow = 4;
+                    worksheet.Cell(headerRow, 1).Value = "Mã phiếu";
+                    worksheet.Cell(headerRow, 2).Value = "Ngày nhập";
+                    worksheet.Cell(headerRow, 3).Value = "Nhà cung cấp";
+                    worksheet.Cell(headerRow, 4).Value = "SĐT";
+                    worksheet.Cell(headerRow, 5).Value = "Người tạo";
+                    worksheet.Cell(headerRow, 6).Value = "Tổng tiền (VNĐ)";
+
+                    // Style cho header
+                    var headerRange = worksheet.Range(headerRow, 1, headerRow, 6);
+                    headerRange.Style.Font.Bold = true;
+                    headerRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
+                    headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                    headerRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+
+                    // Dữ liệu
+                    DataTable dt = (DataTable)dgvPhieuNhap.DataSource;
+                    int currentRow = headerRow + 1;
+                    decimal tongChiPhi = 0;
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        worksheet.Cell(currentRow, 1).Value = row["MaPhieuNhap"].ToString();
+                        worksheet.Cell(currentRow, 2).Value = Convert.ToDateTime(row["NgayNhap"]).ToString("dd/MM/yyyy HH:mm");
+                        worksheet.Cell(currentRow, 3).Value = row["TenNhaCungCap"].ToString();
+                        worksheet.Cell(currentRow, 4).Value = row["SoDienThoai"].ToString();
+                        worksheet.Cell(currentRow, 5).Value = row["NguoiTao"].ToString();
+                        
+                        decimal tongTien = Convert.ToDecimal(row["TongTien"]);
+                        worksheet.Cell(currentRow, 6).Value = tongTien;
+                        worksheet.Cell(currentRow, 6).Style.NumberFormat.Format = "#,##0";
+                        
+                        tongChiPhi += tongTien;
+                        currentRow++;
+                    }
+
+                    // Tổng cộng
+                    int totalRow = currentRow;
+                    worksheet.Cell(totalRow, 5).Value = "TỔNG CỘNG:";
+                    worksheet.Cell(totalRow, 5).Style.Font.Bold = true;
+                    worksheet.Cell(totalRow, 6).Value = tongChiPhi;
+                    worksheet.Cell(totalRow, 6).Style.Font.Bold = true;
+                    worksheet.Cell(totalRow, 6).Style.NumberFormat.Format = "#,##0";
+                    worksheet.Cell(totalRow, 6).Style.Fill.BackgroundColor = XLColor.LightYellow;
+
+                    // Border cho dữ liệu
+                    var dataRange = worksheet.Range(headerRow, 1, totalRow, 6);
+                    dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                    dataRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+
+                    // Auto-fit columns
+                    worksheet.Columns().AdjustToContents();
+
+                    // Lưu file
+                    workbook.SaveAs(filePath);
+                }
+
+                MessageBox.Show($"Xuất báo cáo thành công!\n\nĐường dẫn: {filePath}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
+                // Mở file Excel
+                System.Diagnostics.Process.Start(filePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi xuất báo cáo: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnDong_Click(object sender, EventArgs e)
