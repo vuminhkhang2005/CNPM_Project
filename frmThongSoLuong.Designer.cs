@@ -48,7 +48,7 @@ namespace CNPM_Project
             // lblTitle
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.Location = new System.Drawing.Point(250, 15);
+            this.lblTitle.Location = new System.Drawing.Point(320, 15);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(300, 24);
             this.lblTitle.Text = "QUẢN LÝ THÔNG SỐ LƯƠNG";
@@ -167,7 +167,7 @@ namespace CNPM_Project
             this.dgvThongSoLuong.Name = "dgvThongSoLuong";
             this.dgvThongSoLuong.ReadOnly = true;
             this.dgvThongSoLuong.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvThongSoLuong.Size = new System.Drawing.Size(740, 250);
+            this.dgvThongSoLuong.Size = new System.Drawing.Size(940, 340);
             this.dgvThongSoLuong.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvThongSoLuong_CellClick);
             
             // btnThem
@@ -228,7 +228,7 @@ namespace CNPM_Project
             // frmThongSoLuong
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 480);
+            this.ClientSize = new System.Drawing.Size(1000, 600);
             this.Controls.Add(this.btnDong);
             this.Controls.Add(this.btnLamMoi);
             this.Controls.Add(this.btnXoa);
