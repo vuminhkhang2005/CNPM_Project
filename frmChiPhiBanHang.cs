@@ -46,7 +46,7 @@ namespace CNPM_Project
                             SUM(CTDH.Tongtiensanpham) - SUM(CTDH.Soluong * SP.Gianhap) AS LoiNhuan
                         FROM Donhang AS DH
                         INNER JOIN Thongtinkhachhang AS KH ON DH.Sodienthoaikhachhang = KH.Sodienthoai
-                        INNER JOIN Taikhoan AS TK ON DH.Manhanvien = CAST(TK.Manguoidung AS NVARCHAR)
+                        INNER JOIN Taikhoan AS TK ON DH.Manhanvien = TK.Manguoidung
                         INNER JOIN Chitietdonhang AS CTDH ON DH.Madonhang = CTDH.Madonhang
                         INNER JOIN Sanphamthuoc AS SP ON CTDH.Masanpham = SP.ID
                         WHERE DH.Ngaytaodon BETWEEN @TuNgay AND @DenNgay

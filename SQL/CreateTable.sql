@@ -20,7 +20,7 @@ GO
 -- 1. Bảng Tài khoản
 -- ================================
 CREATE TABLE Taikhoan (
-    Manguoidung INT PRIMARY KEY IDENTITY(1,1),
+    Manguoidung NVARCHAR(255) PRIMARY KEY,
     Hovaten NVARCHAR(255) NOT NULL,
     Sodienthoai NVARCHAR(20) NOT NULL UNIQUE,
     Matkhau NVARCHAR(255) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE Thongtinkhachhang (
     Sodienthoai NVARCHAR(20) PRIMARY KEY,
     Hovaten NVARCHAR(255) NOT NULL,
     Diemtichluy INT DEFAULT 0,
-    Manhanvien INT NOT NULL,
+    Manhanvien NVARCHAR(255) NOT NULL,
     CONSTRAINT FK_KH_NV FOREIGN KEY (Manhanvien) REFERENCES Taikhoan(Manguoidung)
 );
 
@@ -114,7 +114,7 @@ CREATE TABLE Phanhoikhachhang (
     ID INT PRIMARY KEY IDENTITY(1,1),
     Hovaten NVARCHAR(255) NOT NULL,
     Sodienthoai NVARCHAR(20) NOT NULL,
-    Manhanvien INT NOT NULL,
+    Manhanvien NVARCHAR(255) NOT NULL,
     Phanhoi NVARCHAR(1000),
     Ngaytao DATETIME DEFAULT GETDATE(),
 	Trangthai nvarchar(100),
@@ -143,7 +143,7 @@ CREATE TABLE NhaCungCap (
 CREATE TABLE PhieuNhapHang (
     MaPhieuNhap INT PRIMARY KEY IDENTITY(1,1),
     MaNhaCungCap INT NOT NULL,
-    MaNguoiTao INT NOT NULL, -- Kế toán hoặc nhân viên kho
+    MaNguoiTao NVARCHAR(255) NOT NULL, -- Kế toán hoặc nhân viên kho
     NgayNhap DATETIME DEFAULT GETDATE(),
     TongTien DECIMAL(18, 2) NOT NULL,
     CONSTRAINT FK_PNH_NCC FOREIGN KEY (MaNhaCungCap) REFERENCES NhaCungCap(MaNhaCungCap),
@@ -185,7 +185,7 @@ CREATE TABLE ThongSoLuong (
 -- ================================
 CREATE TABLE BangLuong (
     MaBangLuong INT PRIMARY KEY IDENTITY(1,1),
-    MaNhanVien INT NOT NULL,
+    MaNhanVien NVARCHAR(255) NOT NULL,
     Thang INT NOT NULL,
     Nam INT NOT NULL,
     SoNgayCongThucTe INT NOT NULL,
@@ -209,6 +209,6 @@ CREATE TABLE CongNo (
     NgayPhatSinh DATE NOT NULL,
     LyDo NVARCHAR(500),
     TrangThai NVARCHAR(100) DEFAULT N'Chưa thanh toán', -- Ví dụ: 'Chưa thanh toán', 'Đã thanh toán'
-    MaNguoiTao INT NOT NULL,
+    MaNguoiTao NVARCHAR(255) NOT NULL,
     CONSTRAINT FK_CN_NguoiTao FOREIGN KEY (MaNguoiTao) REFERENCES Taikhoan(Manguoidung)
 );
