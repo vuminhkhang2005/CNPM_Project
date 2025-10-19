@@ -88,9 +88,10 @@ CREATE TABLE Sanphamthuoc (
 CREATE TABLE Donhang (
     Madonhang INT PRIMARY KEY IDENTITY(1,1),
     Sodienthoaikhachhang NVARCHAR(20) NOT NULL,
-	Manhanvien nvarchar(255) not null,
+	Manhanvien INT NOT NULL,
     Ngaytaodon DATETIME DEFAULT GETDATE(),
-    CONSTRAINT FK_DH_KH FOREIGN KEY (Sodienthoaikhachhang) REFERENCES Thongtinkhachhang(Sodienthoai)
+    CONSTRAINT FK_DH_KH FOREIGN KEY (Sodienthoaikhachhang) REFERENCES Thongtinkhachhang(Sodienthoai),
+    CONSTRAINT FK_DH_NV FOREIGN KEY (Manhanvien) REFERENCES Taikhoan(Manguoidung)
 );
 
 -- ================================
