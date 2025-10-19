@@ -50,7 +50,7 @@ namespace CNPM_Project
 
                     // Thêm dòng "Chọn nhân viên" ở đầu
                     DataRow row = dt.NewRow();
-                    row["Manguoidung"] = -1;
+                    row["Manguoidung"] = "";
                     row["Hovaten"] = "-- Chọn nhân viên --";
                     dt.Rows.InsertAt(row, 0);
 
@@ -66,7 +66,7 @@ namespace CNPM_Project
             }
         }
 
-        private void LoadBangLuongToGrid(int? thang = null, int? nam = null, int? maNhanVien = null)
+        private void LoadBangLuongToGrid(int? thang = null, int? nam = null, string maNhanVien = null)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace CNPM_Project
                     if (nam.HasValue && nam.Value > 0)
                         query += " AND BL.Nam = @Nam";
                     
-                    if (maNhanVien.HasValue && maNhanVien.Value > 0)
+                    if (!string.IsNullOrEmpty(maNhanVien))
                         query += " AND BL.MaNhanVien = @MaNV";
 
                     query += " ORDER BY BL.MaNhanVien";
@@ -112,8 +112,8 @@ namespace CNPM_Project
                     if (nam.HasValue && nam.Value > 0)
                         cmd.Parameters.AddWithValue("@Nam", nam.Value);
                     
-                    if (maNhanVien.HasValue && maNhanVien.Value > 0)
-                        cmd.Parameters.AddWithValue("@MaNV", maNhanVien.Value);
+                    if (!string.IsNullOrEmpty(maNhanVien))
+                        cmd.Parameters.AddWithValue("@MaNV", maNhanVien);
 
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
@@ -173,7 +173,7 @@ namespace CNPM_Project
 
             try
             {
-                int maNhanVien = Convert.ToInt32(cboNhanVien.SelectedValue);
+                string maNhanVien = cboNhanVien.SelectedValue?.ToString();
                 int soNgayCong = Convert.ToInt32(txtSoNgayCong.Text);
 
                 decimal luongThucLinh = TinhLuong(maNhanVien, soNgayCong, out decimal luongCoBan, out decimal phuCap, out decimal khauTru);
@@ -206,7 +206,7 @@ namespace CNPM_Project
 
             try
             {                
-                int maNhanVien = Convert.ToInt32(cboNhanVien.SelectedValue);
+                string maNhanVien = cboNhanVien.SelectedValue?.ToString();
                 int thang = Convert.ToInt32(numThang.Value);
                 int nam = Convert.ToInt32(numNam.Value);
                 int soNgayCong = Convert.ToInt32(txtSoNgayCong.Text);
@@ -277,7 +277,7 @@ namespace CNPM_Project
 
             try
             {
-                int maNhanVien = Convert.ToInt32(cboNhanVien.SelectedValue);
+                string maNhanVien = cboNhanVien.SelectedValue?.ToString();
                 int thang = Convert.ToInt32(numThang.Value);
                 int nam = Convert.ToInt32(numNam.Value);
                 int soNgayCong = Convert.ToInt32(txtSoNgayCong.Text);
@@ -388,8 +388,8 @@ namespace CNPM_Project
         {
             int? thang = chkThang.Checked && numThang.Value > 0 ? (int?)numThang.Value : null;
             int? nam = chkNam.Checked && numNam.Value > 0 ? (int?)numNam.Value : null;
-            int? maNV = cboNhanVien.SelectedValue != null && Convert.ToInt32(cboNhanVien.SelectedValue) > 0 
-                        ? (int?)Convert.ToInt32(cboNhanVien.SelectedValue) 
+            string maNV = cboNhanVien.SelectedValue != null && !string.IsNullOrEmpty(cboNhanVien.SelectedValue.ToString()) 
+                        ? cboNhanVien.SelectedValue.ToString() 
                         : null;
 
             LoadBangLuongToGrid(thang, nam, maNV);
@@ -418,7 +418,7 @@ namespace CNPM_Project
                     selectedMaBangLuong = Convert.ToInt32(row.Cells["MaBangLuong"].Value);
                     
                     // Điền dữ liệu vào form
-                    cboNhanVien.SelectedValue = Convert.ToInt32(row.Cells["MaNhanVien"].Value);
+                    cboNhanVien.SelectedValue = row.Cells["MaNhanVien"].Value.ToString();
                     numThang.Value = Convert.ToInt32(row.Cells["Thang"].Value);
                     numNam.Value = Convert.ToInt32(row.Cells["Nam"].Value);
                     txtSoNgayCong.Text = row.Cells["SoNgayCongThucTe"].Value.ToString();
@@ -430,7 +430,7 @@ namespace CNPM_Project
             }
         }
 
-        private decimal TinhLuong(int maNhanVien, int soNgayCong, out decimal luongCoBan, out decimal phuCap, out decimal khauTru)
+        private decimal TinhLuong(string maNhanVien, int soNgayCong, out decimal luongCoBan, out decimal phuCap, out decimal khauTru)
         {
             luongCoBan = 0;
             phuCap = 0;
@@ -503,7 +503,7 @@ namespace CNPM_Project
 
         private bool ValidateInput()
         {
-            if (cboNhanVien.SelectedValue == null || Convert.ToInt32(cboNhanVien.SelectedValue) <= 0)
+            if (cboNhanVien.SelectedValue == null || string.IsNullOrEmpty(cboNhanVien.SelectedValue.ToString()))
             {
                 MessageBox.Show("Vui lòng chọn nhân viên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 cboNhanVien.Focus();
