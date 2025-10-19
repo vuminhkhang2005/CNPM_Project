@@ -8,9 +8,9 @@ namespace CNPM_Project
     public partial class frmThemCongNo : Form
     {
         string connectionString = @"Data Source=DESKTOP-MJLB0BP\SQLEXPRESS;Initial Catalog=NhaThuocDB;Integrated Security=True;TrustServerCertificate=True";
-        int maNguoiDung; // Mã kế toán đang đăng nhập
+        string maNguoiDung; // Mã kế toán đang đăng nhập
 
-        public frmThemCongNo(int maNguoiDung)
+        public frmThemCongNo(string maNguoiDung)
         {
             InitializeComponent();
             this.maNguoiDung = maNguoiDung;

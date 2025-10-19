@@ -7,20 +7,18 @@ GO
 -- ==============================================================
 
 -- ================================
--- 1. Bảng Tài khoản (Taikhoan)
--- Chức vụ: Quản lý, Dược sĩ, Nhân viên bán hàng, Kế toán, Nhân viên kho
+-- PHẦN KẾ TOÁN
 -- ================================
-INSERT INTO Taikhoan (Hovaten, Sodienthoai, Matkhau, Ngaysinh, Chucvu) VALUES
-(N'Nguyễn Văn An', '0912345678', 'password123', '1985-05-20', N'Quản lý'),
-(N'Trần Thị Bích', '0987654321', 'password123', '1990-11-15', N'Nhân viên chăm sóc khách hàng'),
-(N'Lê Minh Cường', '0905112233', 'password123', '1992-02-10', N'Nhân viên kho'),
-(N'Phạm Thị Dung', '0934567890', 'password123', '1995-07-30', N'Nhân viên bán hàng'),
-(N'Hoàng Văn Em', '0978123456', 'password123', '1998-09-05', N'Nhân viên bán hàng'),
-(N'Vũ Thị Hà', '0915654789', 'password123', '1991-03-25', N'Kế toán'),
-(N'Đặng Minh Long', '0945789123', 'password123', '1993-08-12', N'Nhân viên kho'),
-(N'Bùi Thị Kiều', '0965432198', 'password123', '1996-01-18', N'Nhân viên bán hàng'),
-(N'Ngô Tuấn Anh', '0923456789', 'password123', '1994-06-22', N'Nhân viên chăm sóc khách hàng'),
-(N'Đỗ Phương Thảo', '0956789123', 'password123', '1988-12-01', N'Kế toán');
+
+INSERT INTO Taikhoan (Manguoidung, Hovaten, Sodienthoai, Matkhau, Ngaysinh, Chucvu) 
+VALUES
+(N'KeToan_0918273645', N'Vũ Minh Khang', '0918273645', '123', '2004-05-26', N'Kế toán'),
+(N'NV001', N'Nhân viên mặc định', '0000000000', '123456', NULL, N'Nhân viên bán hàng'),
+(N'NhanVienBanHang_0987654321', N'Lê Thị Thảo', '0987654321', '123', '2002-04-17', N'Nhân viên bán hàng'),
+(N'NhanVienChamSocKhachHang_0192837465', N'Huỳnh Hoài Phương', '0192837465', '123', '2004-08-17', N'Nhân viên chăm sóc khách hàng'),
+(N'NhanVienKho_0123456789', N'Huỳnh Thanh Nhân', '0123456789', '123', '2001-03-19', N'Nhân viên kho'),
+(N'Nhân viên chăm sóc khách hàng_0344969876', N'Huỳnh Hoài Phương', '0344969876', '1234', '1991-02-08', N'Nhân viên chăm sóc khách hàng'),
+(N'QuanLy_0799513501', N'Lê Vũ Hải', '0799513501', '123', '2005-03-03', N'Quản lý');
 GO
 
 -- ================================
@@ -28,16 +26,16 @@ GO
 -- Manhanvien được gán ngẫu nhiên từ các nhân viên đã tạo ở trên
 -- ================================
 INSERT INTO Thongtinkhachhang (Sodienthoai, Hovaten, Diemtichluy, Manhanvien) VALUES
-('0398765432', N'Trần Văn Hùng', 150, 4),
-('0381234567', N'Lê Thị Mai', 200, 5),
-('0376549871', N'Nguyễn Hoàng Anh', 50, 4),
-('0369871234', N'Phạm Minh Tuấn', 320, 8),
-('0351237896', N'Đặng Thị Lan', 80, 5),
-('0346543219', N'Vũ Ngọc Sơn', 450, 4),
-('0337894561', N'Bùi Thanh Trúc', 120, 8),
-('0329876543', N'Hoàng Thị Thu', 250, 5),
-('0861234567', N'Ngô Gia Bảo', 10, 4),
-('0887654321', N'Đỗ Mỹ Linh', 95, 8);
+('0398765432', N'Trần Văn Hùng', 150, N'NhanVienBanHang_0987654321'),
+('0381234567', N'Lê Thị Mai', 200, N'NhanVienBanHang_0987654321'),
+('0376549871', N'Nguyễn Hoàng Anh', 50, N'NhanVienBanHang_0987654321'),
+('0369871234', N'Phạm Minh Tuấn', 320, N'NhanVienBanHang_0987654321'),
+('0351237896', N'Đặng Thị Lan', 80, N'NhanVienBanHang_0987654321'),
+('0346543219', N'Vũ Ngọc Sơn', 450, N'NhanVienBanHang_0987654321'),
+('0337894561', N'Bùi Thanh Trúc', 120, N'NhanVienBanHang_0987654321'),
+('0329876543', N'Hoàng Thị Thu', 250, N'NhanVienBanHang_0987654321'),
+('0861234567', N'Ngô Gia Bảo', 10, N'NhanVienBanHang_0987654321'),
+('0887654321', N'Đỗ Mỹ Linh', 95, N'NhanVienBanHang_0987654321');
 GO
 
 -- ================================
@@ -92,16 +90,16 @@ GO
 -- 6. Bảng Đơn hàng (Donhang)
 -- ================================
 INSERT INTO Donhang (Sodienthoaikhachhang, Manhanvien, Ngaytaodon) VALUES
-('0398765432', '4', '2025-10-10 09:30:00'),
-('0381234567', '5', '2025-10-10 10:15:00'),
-('0376549871', '4', '2025-10-11 14:00:00'),
-('0369871234', '8', '2025-10-11 15:20:00'),
-('0351237896', '5', '2025-10-12 08:45:00'),
-('0346543219', '4', '2025-10-12 11:05:00'),
-('0337894561', '8', '2025-10-13 16:30:00'),
-('0329876543', '5', '2025-10-13 17:00:00'),
-('0861234567', '4', '2025-10-14 09:00:00'),
-('0887654321', '8', '2025-10-14 10:10:00');
+('0398765432', N'NhanVienBanHang_0987654321', '2025-10-10 09:30:00'),
+('0381234567', N'NhanVienBanHang_0987654321', '2025-10-10 10:15:00'),
+('0376549871', N'NhanVienBanHang_0987654321', '2025-10-11 14:00:00'),
+('0369871234', N'NhanVienBanHang_0987654321', '2025-10-11 15:20:00'),
+('0351237896', N'NhanVienBanHang_0987654321', '2025-10-12 08:45:00'),
+('0346543219', N'NhanVienBanHang_0987654321', '2025-10-12 11:05:00'),
+('0337894561', N'NhanVienBanHang_0987654321', '2025-10-13 16:30:00'),
+('0329876543', N'NhanVienBanHang_0987654321', '2025-10-13 17:00:00'),
+('0861234567', N'NhanVienBanHang_0987654321', '2025-10-14 09:00:00'),
+('0887654321', N'NhanVienBanHang_0987654321', '2025-10-14 10:10:00');
 GO
 
 -- ================================
@@ -125,16 +123,16 @@ GO
 -- 8. Bảng Phản hồi khách hàng (Phanhoikhachhang)
 -- ================================
 INSERT INTO Phanhoikhachhang (Hovaten, Sodienthoai, Manhanvien, Phanhoi, Trangthai) VALUES
-(N'Trần Văn Hùng', '0398765432', 2, N'Nhân viên tư vấn nhiệt tình, sản phẩm tốt.', N'Đã xử lý'),
-(N'Lê Thị Mai', '0381234567', 3, N'Nhà thuốc nên có thêm nhiều loại thực phẩm chức năng hơn.', N'Mới'),
-(N'Nguyễn Hoàng Anh', '0376549871', 2, N'Giá cả hợp lý, sẽ quay lại ủng hộ.', N'Đã xử lý'),
-(N'Phạm Minh Tuấn', '0369871234', 9, N'Dược sĩ tư vấn rất kỹ về tác dụng phụ của thuốc.', N'Đã xử lý'),
-(N'Đặng Thị Lan', '0351237896', 2, N'Thời gian chờ thanh toán hơi lâu.', N'Đang xem xét'),
-(N'Vũ Ngọc Sơn', '0346543219', 3, N'Hài lòng với dịch vụ.', N'Đã xử lý'),
-(N'Bùi Thanh Trúc', '0337894561', 9, N'Tìm thuốc rất dễ dàng, nhà thuốc sắp xếp gọn gàng.', N'Đã xử lý'),
-(N'Hoàng Thị Thu', '0329876543', 2, N'Sản phẩm này có khuyến mãi gì không?', N'Mới'),
-(N'Ngô Gia Bảo', '0861234567', 3, N'Hỏi về một loại thuốc nhưng nhà thuốc đã hết hàng.', N'Đang xem xét'),
-(N'Đỗ Mỹ Linh', '0887654321', 9, N'Dược sĩ rất thân thiện và chuyên nghiệp.', N'Đã xử lý');
+(N'Trần Văn Hùng', '0398765432', N'NhanVienChamSocKhachHang_0192837465', N'Nhân viên tư vấn nhiệt tình, sản phẩm tốt.', N'Đã xử lý'),
+(N'Lê Thị Mai', '0381234567', N'NhanVienChamSocKhachHang_0192837465', N'Nhà thuốc nên có thêm nhiều loại thực phẩm chức năng hơn.', N'Mới'),
+(N'Nguyễn Hoàng Anh', '0376549871', N'NhanVienChamSocKhachHang_0192837465', N'Giá cả hợp lý, sẽ quay lại ủng hộ.', N'Đã xử lý'),
+(N'Phạm Minh Tuấn', '0369871234', N'Nhân viên chăm sóc khách hàng_0344969876', N'Dược sĩ tư vấn rất kỹ về tác dụng phụ của thuốc.', N'Đã xử lý'),
+(N'Đặng Thị Lan', '0351237896', N'NhanVienChamSocKhachHang_0192837465', N'Thời gian chờ thanh toán hơi lâu.', N'Đang xem xét'),
+(N'Vũ Ngọc Sơn', '0346543219', N'NhanVienChamSocKhachHang_0192837465', N'Hài lòng với dịch vụ.', N'Đã xử lý'),
+(N'Bùi Thanh Trúc', '0337894561', N'Nhân viên chăm sóc khách hàng_0344969876', N'Tìm thuốc rất dễ dàng, nhà thuốc sắp xếp gọn gàng.', N'Đã xử lý'),
+(N'Hoàng Thị Thu', '0329876543', N'NhanVienChamSocKhachHang_0192837465', N'Sản phẩm này có khuyến mãi gì không?', N'Mới'),
+(N'Ngô Gia Bảo', '0861234567', N'NhanVienChamSocKhachHang_0192837465', N'Hỏi về một loại thuốc nhưng nhà thuốc đã hết hàng.', N'Đang xem xét'),
+(N'Đỗ Mỹ Linh', '0887654321', N'Nhân viên chăm sóc khách hàng_0344969876', N'Dược sĩ rất thân thiện và chuyên nghiệp.', N'Đã xử lý');
 GO
 
 -- ================================
@@ -158,37 +156,35 @@ INSERT INTO NhaCungCap (TenNhaCungCap, SoDienThoai, DiaChi, Email) VALUES
 GO
 
 -- ================================
--- 10. Bảng Phiếu nhập hàng (PhieuNhapHang)
--- MaNguoiTao là Kế toán (6, 10) hoặc Nhân viên kho (7)
+-- 10. Bảng Phiếu nhập hàng (PhieuNhapHang) - ĐÃ SỬA
 -- ================================
 INSERT INTO PhieuNhapHang (MaNhaCungCap, MaNguoiTao, NgayNhap, TongTien) VALUES
-(1, 7, '2025-09-01 10:00:00', 5000000), -- NCC Dược Hậu Giang, SP Amoxicillin
-(4, 7, '2025-09-02 11:30:00', 9500000), -- NCC GSK, SP Panadol Extra
-(6, 7, '2025-09-05 14:00:00', 5400000), -- NCC OPC, SP Vitamin C
-(2, 7, '2025-09-06 09:00:00', 3300000), -- NCC Traphaco, SP Amlodipin
-(3, 7, '2025-09-10 16:20:00', 12000000),-- NCC Sanofi, SP Enterogermina
-(10, 7, '2025-09-12 15:00:00', 6500000),-- NCC Hisamitsu (giả định), SP Prospan
-(5, 7, '2025-09-15 10:45:00', 3500000), -- NCC Mekophar (giả định), SP Nizoral
-(8, 7, '2025-09-18 08:30:00', 1500000), -- NCC Vimedimex (giả định), SP Nước muối
-(9, 7, '2025-09-20 13:00:00', 8400000), -- NCC Pymepharco (giả định), SP Glucophage
-(7, 7, '2025-09-22 11:00:00', 28000000);-- NCC Imexpharm (giả định), SP Blackmores
+(1, N'NhanVienKho_0123456789', '2025-09-01 10:00:00', 5000000),
+(4, N'NhanVienKho_0123456789', '2025-09-02 11:30:00', 9500000),
+(6, N'NhanVienKho_0123456789', '2025-09-05 14:00:00', 5400000),
+(2, N'NhanVienKho_0123456789', '2025-09-06 09:00:00', 3300000),
+(3, N'NhanVienKho_0123456789', '2025-09-10 16:20:00', 12000000),
+(10, N'NhanVienKho_0123456789', '2025-09-12 15:00:00', 6500000),
+(5, N'NhanVienKho_0123456789', '2025-09-15 10:45:00', 3500000),
+(8, N'NhanVienKho_0123456789', '2025-09-18 08:30:00', 1500000),
+(9, N'NhanVienKho_0123456789', '2025-09-20 13:00:00', 8400000),
+(7, N'NhanVienKho_0123456789', '2025-09-22 11:00:00', 28000000);
 GO
 
 -- ================================
--- 11. Bảng Chi tiết phiếu nhập (ChiTietPhieuNhap)
--- DonGiaNhap lấy từ Gianhap của sản phẩm
+-- 11. Bảng Chi tiết phiếu nhập (ChiTietPhieuNhap) - CHẠY NGAY SAU BLOCK 10
 -- ================================
 INSERT INTO ChiTietPhieuNhap (MaPhieuNhap, MaSanPham, SoLuongNhap, DonGiaNhap) VALUES
-(1, 1, 200, 25000),   -- Tổng: 5,000,000
-(2, 2, 100, 95000),   -- Tổng: 9,500,000
-(3, 3, 300, 18000),   -- Tổng: 5,400,000
-(4, 4, 150, 22000),   -- Tổng: 3,300,000
-(5, 5, 100, 120000),  -- Tổng: 12,000,000
-(6, 6, 100, 65000),   -- Tổng: 6,500,000
-(7, 7, 100, 35000),   -- Tổng: 3,500,000
-(8, 8, 1000, 1500),  -- Tổng: 1,500,000
-(9, 9, 120, 70000),   -- Tổng: 8,400,000
-(10, 10, 80, 350000); -- Tổng: 28,000,000
+(1, 1, 200, 25000),
+(2, 2, 100, 95000),
+(3, 3, 300, 18000),
+(4, 4, 150, 22000),
+(5, 5, 100, 120000),
+(6, 6, 100, 65000),
+(7, 7, 100, 35000),
+(8, 8, 1000, 1500),
+(9, 9, 120, 70000),
+(10, 10, 80, 350000);
 GO
 
 -- ================================
@@ -280,32 +276,29 @@ GO
 -- ThucLinh = LuongCoBan + PhuCap - KhauTruBaoHiem
 -- ================================
 INSERT INTO BangLuong (MaNhanVien, Thang, Nam, SoNgayCongThucTe, LuongCoBan, PhuCap, KhauTruBaoHiem, ThucLinh) VALUES
-(1, 9, 2025, 26, 8000000, 1000000, 840000, 8160000), -- Quản lý
-(2, 9, 2025, 25, 7000000, 500000, 735000, 6765000),  -- Dược sĩ
-(3, 9, 2025, 26, 7000000, 500000, 735000, 6765000),  -- Dược sĩ
-(4, 9, 2025, 24, 5500000, 0, 577500, 4922500),      -- Nhân viên
-(5, 9, 2025, 26, 5500000, 0, 577500, 4922500),      -- Nhân viên
-(6, 9, 2025, 26, 6000000, 300000, 630000, 5670000),  -- Kế toán
-(7, 9, 2025, 25, 5800000, 200000, 609000, 5391000),  -- Nhân viên kho
-(8, 9, 2025, 26, 5500000, 0, 577500, 4922500),      -- Nhân viên
-(9, 9, 2025, 26, 7000000, 500000, 735000, 6765000),  -- Dược sĩ
-(10, 9, 2025, 25, 6000000, 300000, 630000, 5670000); -- Kế toán
+(N'KeToan_0918273645', 9, 2025, 26, 6200000, 850000, 740250, 6309750),
+(N'NV001', 9, 2025, 25, 5200000, 550000, 603750, 5146250),
+(N'NhanVienBanHang_0987654321', 9, 2025, 26, 5200000, 550000, 603750, 5146250),
+(N'NhanVienChamSocKhachHang_0192837465', 9, 2025, 24, 5000000, 550000, 582750, 4967250),
+(N'NhanVienKho_0123456789', 9, 2025, 25, 5700000, 650000, 666750, 5683250),
+(N'Nhân viên chăm sóc khách hàng_0344969876', 9, 2025, 26, 5000000, 550000, 582750, 4967250),
+(N'QuanLy_0799513501', 9, 2025, 26, 8200000, 2100000, 1081500, 9218500);
 GO
 
 -- ================================
 -- 14. Bảng Công nợ (CongNo)
--- MaDoiTuong là Sodienthoai (KhachHang) hoặc MaNhaCungCap (NhaCungCap)
--- MaNguoiTao là Kế toán (6, 10) hoặc Quản lý (1)
+-- Sửa MaNguoiTao = 1 thành N'QuanLy_0799513501'
+-- Sửa MaNguoiTao = 6 và 10 thành N'KeToan_0918273645'
 -- ================================
 INSERT INTO CongNo (LoaiDoiTuong, MaDoiTuong, SoTienNo, NgayPhatSinh, LyDo, TrangThai, MaNguoiTao) VALUES
-(N'NhaCungCap', '1', 50000000, '2025-08-15', N'Tiền hàng đợt 1 tháng 8', N'Chưa thanh toán', 6),
-(N'NhaCungCap', '3', 35000000, '2025-08-20', N'Tiền hàng đợt 2 tháng 8', N'Đã thanh toán', 10),
-(N'KhachHang', '0346543219', 500000, '2025-09-10', N'Mua thuốc nợ', N'Chưa thanh toán', 1),
-(N'KhachHang', '0369871234', 250000, '2025-09-12', N'Mua thiếu tiền', N'Đã thanh toán', 1),
-(N'NhaCungCap', '2', 42000000, '2025-09-01', N'Công nợ gối đầu tháng 9', N'Chưa thanh toán', 6),
-(N'NhaCungCap', '5', 15000000, '2025-09-05', N'Tiền nhập hàng TPCN', N'Chưa thanh toán', 10),
-(N'KhachHang', '0398765432', 120000, '2025-09-25', N'Khách quen mua nợ', N'Chưa thanh toán', 1),
-(N'NhaCungCap', '7', 20000000, '2025-09-28', N'Công nợ cuối tháng 9', N'Đã thanh toán', 6),
-(N'KhachHang', '0381234567', 85000, '2025-10-01', N'Khách hàng quên mang tiền', N'Đã thanh toán', 1),
-(N'KhachHang', '0337894561', 300000, '2025-10-05', N'Nợ tiền thuốc bổ', N'Chưa thanh toán', 1);
+(N'NhaCungCap', '1', 50000000, '2025-08-15', N'Tiền hàng đợt 1 tháng 8', N'Chưa thanh toán', N'KeToan_0918273645'),
+(N'NhaCungCap', '3', 35000000, '2025-08-20', N'Tiền hàng đợt 2 tháng 8', N'Đã thanh toán', N'KeToan_0918273645'),
+(N'KhachHang', '0346543219', 500000, '2025-09-10', N'Mua thuốc nợ', N'Chưa thanh toán', N'QuanLy_0799513501'),
+(N'KhachHang', '0369871234', 250000, '2025-09-12', N'Mua thiếu tiền', N'Đã thanh toán', N'QuanLy_0799513501'),
+(N'NhaCungCap', '2', 42000000, '2025-09-01', N'Công nợ gối đầu tháng 9', N'Chưa thanh toán', N'KeToan_0918273645'),
+(N'NhaCungCap', '5', 15000000, '2025-09-05', N'Tiền nhập hàng TPCN', N'Chưa thanh toán', N'KeToan_0918273645'),
+(N'KhachHang', '0398765432', 120000, '2025-09-25', N'Khách quen mua nợ', N'Chưa thanh toán', N'QuanLy_0799513501'),
+(N'NhaCungCap', '7', 20000000, '2025-09-28', N'Công nợ cuối tháng 9', N'Đã thanh toán', N'KeToan_0918273645'),
+(N'KhachHang', '0381234567', 85000, '2025-10-01', N'Khách hàng quên mang tiền', N'Đã thanh toán', N'QuanLy_0799513501'),
+(N'KhachHang', '0337894561', 300000, '2025-10-05', N'Nợ tiền thuốc bổ', N'Chưa thanh toán', N'QuanLy_0799513501');
 GO

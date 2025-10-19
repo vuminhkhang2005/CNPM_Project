@@ -5,14 +5,14 @@ namespace CNPM_Project
 {
     public partial class frmMenuChinh : Form
     {
-        private int maNguoiDung = 1; // Mã người dùng đăng nhập (mặc định là Kế toán)
+        private string maNguoiDung = "KeToan_0918273645"; // Mã người dùng đăng nhập (mặc định là Kế toán)
 
         public frmMenuChinh()
         {
             InitializeComponent();
         }
 
-        public frmMenuChinh(int maNguoiDung)
+        public frmMenuChinh(string maNguoiDung)
         {
             InitializeComponent();
             this.maNguoiDung = maNguoiDung;
